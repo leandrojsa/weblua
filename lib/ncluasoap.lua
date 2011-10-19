@@ -300,63 +300,13 @@ function call(msgTable, callback, soapVersion, port, externalXsd, httpUser, http
   
   local function getHttpResponse(header, body)
      print(""); print(body)
-     local xmlhandler = simpleTreeHandler()
-     local xmlparser = xmlParser(xmlhandler)
-     xmlparser:parse(body, false)
-     local xmlTable = {}
-
-     if nsPrefix ~= "" then
-        nsPrefix = nsPrefix .. ":"
-     end
-     
-     if xmlhandler and xmlhandler.root then   
-        --Se a resposta não possui o Namespace Prefix correspondente
-        --à versão do SOAP utilizada, testa outros padrões de prefixo.
-        if xmlhandler.root[nsPrefix.."Envelope"] == nil then
-          nsPrefix = ""
-          local prefixes = {"soap:", "SOAP-ENV:", "soapenv:", "S:", "senv:"}
-          for k, v in pairs(prefixes) do
-             if xmlhandler.root[v.."Envelope"] ~= nil then
-                nsPrefix = v
-                break
-             end
-          end
-        end
-        print("\n\nResponse nsPrefix = "..nsPrefix.."\n\n")
-    
-    
-        local envelope = nsPrefix.."Envelope"
-        local bodytag = nsPrefix.."Body"
-        --local operationResp = msgTable.operationName.."Response"
-        xmlTable = xmlhandler.root[envelope][bodytag]
-
-        --Dentro da tag body haverá uma outra tag
-        --que conterá todos os valores retornados pela
-        --função remota. O nome padrão desta tag é 
-        --MethodNameResponse (nome do método + Response). 
-        --Caso o WS retorne um erro, existirá uma tag Fault dentro
-        --do body no lugar da resposta esperada.
-        --Assim, o código abaixo pega o valor da primeira chave,
-        --que contém os dados da resposta da requisição (seja o retorno
-        --do método a tag Fault contendo detalhes do erro)
-            
-        --O uso da função next não funciona para pegar o primeiro elemento. Trava aqui 
-        --_, xmlTable = next(xmlTable)
-        for k, v in pairs(xmlTable) do
-          xmlTable = v
-          break
-        end
-     end
-     
-     xmlTable = removeSchema(xmlTable)     
-     --xmlTable = util.simplifyTable(xmlTable)
      if callback then
-        callback(xmlTable)
+        callback(header, body)
      end
   end
 
   local url = msgTable.address
             --(url, callback, method, params, userAgent, headers, user, password, port)
-  http.request(url, callback, "POST", xml, userAgent,   
+  http.request(url, getHttpResponse, "POST", xml, userAgent,   
                httpContentType, httpUser, httpPasswd, port)
 end

@@ -32,13 +32,14 @@ end
 
 function callback_handler(header, body)
     print('\n\n\nentering callback2\n\n\n')
-    util.printable(header)
+    print(header .. '\n\n')
+    print(body .. '\n\n')
     if data_format == 'xml' then
-        print 'REST XML'
+        response_table = xml_to_table(body)
     elseif data_format == 'json' then
-        print 'REST JSON'
+        response_table = json_to_table(body)
     elseif data_format == 'soap' then
-        print 'SOAP XML'
+        response_table = soap_xml_to_table(body)
     end
-    callback_func(header, body)
+    callback_func(reponse_table)
 end
