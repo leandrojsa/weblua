@@ -314,7 +314,7 @@ function call(msgTable, callback, soapVersion, port, externalXsd, httpUser, http
         --à versão do SOAP utilizada, testa outros padrões de prefixo.
         if xmlhandler.root[nsPrefix.."Envelope"] == nil then
           nsPrefix = ""
-          local prefixes = {"soap:", "SOAP-ENV:", "soapenv:", "S:"}
+          local prefixes = {"soap:", "SOAP-ENV:", "soapenv:", "S:", "senv:"}
           for k, v in pairs(prefixes) do
              if xmlhandler.root[v.."Envelope"] ~= nil then
                 nsPrefix = v
@@ -349,7 +349,7 @@ function call(msgTable, callback, soapVersion, port, externalXsd, httpUser, http
      end
      
      xmlTable = removeSchema(xmlTable)     
-     xmlTable = util.simplifyTable(xmlTable)
+     --xmlTable = util.simplifyTable(xmlTable)
      if callback then
         callback(xmlTable)
      end
