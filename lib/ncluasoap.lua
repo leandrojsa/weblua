@@ -357,6 +357,6 @@ function call(msgTable, callback, soapVersion, port, externalXsd, httpUser, http
 
   local url = msgTable.address
             --(url, callback, method, params, userAgent, headers, user, password, port)
-  http.request(url, getHttpResponse, "POST", xml, userAgent,   
+  http.request(url, callback, "POST", xml, userAgent,   
                httpContentType, httpUser, httpPasswd, port)
 end
