@@ -127,37 +127,6 @@ local function tableToXml(tb, level, elevateAnonymousSubTables, tableName)
   return table.concat(xmltb, "\n")
 end
 
----Remove qualquer elemento que represente informações
---de definições de tipo da tabela, pois somente
---os dados é que interessam.
---@param xmlTable Table lua gerada a partir de código XML
---@return Retorna a nova tabela sem as chaves de schema
-local function removeSchema(xmlTable)
-     --Se xmlTable não for uma tabela, é porque
-     --o resultado retornado pelo WS é simples
-     --(como uma string que já foi extraída do XML de retorno).
-     --Assim, não sendo uma tabela, não existem dados de XML Schema
-     --anexados ao valor retornado (pois para isso a estrutura
-     --precisaria ser composta, ou seja, ser uma tabela para
-     --armazenar o valor retornado e o XML Schema).
-     if type(xmlTable) ~= "table" then
-        return xmlTable
-     end
-
-     local tmp = {}
-     for k, v in pairs(xmlTable) do
-        if type(v) == "table" then
-           v = removeSchema(v)
-        end
-        
-        if k ~= "xs:schema" then
-           tmp[k] = v
-        end
-     end
-     return tmp
-end
-
-
 ---Envia uma requisição SOAP para realizar a chamada de um método remoto vai HTTP
 --@param  msgTable Tabela contendo os parâmetros
 --da requisição, devendo ter o seguinte formato:<br/>

@@ -40,6 +40,10 @@ function callback_handler(header, body)
         response_table = json_to_table(body)
     elseif data_format == 'soap' then
         response_table = soap_xml_to_table(body)
+        print('response_table:')
+        util.printable(response_table)
+    else 
+        response_table = nil
     end
     callback_func(reponse_table)
 end
