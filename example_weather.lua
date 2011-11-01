@@ -8,6 +8,10 @@ package.path = package.path .. ';lib/?.lua'
 
 require "weblua"
 
+local util = require "util"
+
+local weather_info = {}
+
 ---Função para processar a resposta da requisição SOAP enviada ao WS
 --@param result Resultado da chamada ao método remoto via SOAP.
 --No caso deste Web Service, o resultado é uma variável primitiva simples (ou seja, contendo apenas um valor)
@@ -15,13 +19,14 @@ local function getResponse(result)
   --Forma de uso com NCLua SOAP anterior a 0.5.6
   --print("\n\n---------Cotação do Dolar em Reais:", result.ConversionRateResult, "\n\n")
 
+  weather_info = result
   print("\n\n\n--------------------------------RESULTADO--------------------------------")
   print("         Cotação do Dolar em Reais:", result)
   print("--------------------------------RESULTADO--------------------------------\n\n\n")
 
 
   --Finaliza o script lua. Um link no NCL finalizará a aplicação NCL quando o nó lua for finalizado
-  event.post {class="ncl", type="presentation", action="stop"}
+  --event.post {class="ncl", type="presentation", action="stop"}
 end
 
 local msgTable = {}
@@ -37,4 +42,26 @@ msgTable = {
 }
 soap_request("http://www.webservicex.net/globalweather.asmx", msgTable, getResponse)
 
---ncluasoap.call(msgTable, getResponse, '1.1')
+
+function handler(evt)
+
+
+    if (evt.class == 'key' and evt.type == 'press') then        
+	    print("key:", evt.key)
+	    
+	    if evt.key == 'RED' then
+	        event.post {class="ncl", type="presentation", action="stop"}
+	    end
+	    
+	    if evt.key == 'YELLOW' then
+	        print "======"
+	        for k, v in pairs(weather_info) do
+	            print(k,v)
+	        end
+	    end
+	    
+    end
+end
+
+event.register(handler)
+
