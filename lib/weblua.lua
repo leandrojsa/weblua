@@ -30,8 +30,8 @@ function rest_request(url, paramstable, callback, format, method)
 end
 
 function callback_handler(header, body)
-    --print(header .. '\n\n')
-    --print(body .. '\n\n')
+
+    local response_table = {}
     if data_format == 'xml' then
         response_table = xml_to_table(body)
         print('response_table:')
@@ -40,16 +40,11 @@ function callback_handler(header, body)
         end
     elseif data_format == 'json' then
         response_table = json_to_table(body)
-        print('response_table:')
-        for k, v in pairs(response_table) do
-            print(k,":",v)
-        end
+        
     elseif data_format == 'soap' then
         response_table = soap_xml_to_table(body)
         print('response_table:')
         util.printable(response_table)
-    else 
-        response_table = nil
     end
-    callback_func(reponse_table)
+    callback_func(response_table)
 end
